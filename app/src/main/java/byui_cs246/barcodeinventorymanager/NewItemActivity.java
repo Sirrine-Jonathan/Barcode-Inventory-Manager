@@ -34,7 +34,7 @@ public class NewItemActivity extends AppCompatActivity
             public void onClick(View view)
             {
                 if(TextUtils.isEmpty(mEditIdView.getText()) ||
-                   TextUtils.isEmpty(mEditIdView.getText()) ||
+                   TextUtils.isEmpty(mEditQuantityView.getText()) ||
                    TextUtils.isEmpty(mEditIdView.getText()))
                     return;
 
