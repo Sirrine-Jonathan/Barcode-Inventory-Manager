@@ -22,4 +22,9 @@ public class ExampleUnitTest {
     public void emailValidator_CorrectEmailSimple_ReturnsTrue() {
         //assertThat(EmailValidator.isValidEmail("name@email.com"), is(true));
     }
+
+    @Test
+    public void ThisIsATest(){
+        //Random stuff goes here.
+    }
 }
