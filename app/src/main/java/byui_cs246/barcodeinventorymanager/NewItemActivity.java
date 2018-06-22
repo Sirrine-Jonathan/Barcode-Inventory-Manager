@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+
 public class NewItemActivity extends AppCompatActivity
 {
 
@@ -23,10 +25,24 @@ public class NewItemActivity extends AppCompatActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        // zxing object
+        IntentIntegrator integrator = new IntentIntegrator(this);
+
+        // zxing customization
+        //integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
+        integrator.setPrompt("Scan a barcode");
+        //integrator.setCameraId(0);  // Use a specific camera of the device
+        integrator.setBeepEnabled(true);
+        integrator.setBarcodeImageEnabled(true);
+
+        // start the scan
+        integrator.initiateScan();
+
         setContentView(R.layout.activity_new_item);
         mEditIdView = findViewById(R.id.edit_id);
         mEditNameView = findViewById(R.id.edit_name);
-        mEditQuantityView = findViewById(R.id.edit_quantity);;
+        mEditQuantityView = findViewById(R.id.edit_quantity);
 
         final Button button = findViewById(R.id.button_save);
         button.setOnClickListener(new View.OnClickListener()
