@@ -1,6 +1,9 @@
 package byui_cs246.barcodeinventorymanager;
 
 import org.junit.Test;
+import java.util.regex.Pattern;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import static org.junit.Assert.*;
 
@@ -14,4 +17,15 @@ public class ExampleUnitTest {
     public void addition_isCorrect() throws Exception {
         assertEquals(4, 2 + 2);
     }
-}g
+
+    @Test
+    public void emailValidator_CorrectEmailSimple_ReturnsTrue() {
+        //assertThat(EmailValidator.isValidEmail("name@email.com"), is(true));
+    }
+
+    @Test
+    public void ThisIsATest(){
+        //Random stuff goes here.
+    }
+}
+
