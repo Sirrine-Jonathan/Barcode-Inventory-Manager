@@ -25,15 +25,15 @@ public class ItemRepository
 
     public void insert(Item item)
     {
-        new insertAsyncTask(mItemDao).execute(item);
+        new InsertAsyncTask(mItemDao).execute(item);
     }
 
-    private static class insertAsyncTask extends AsyncTask<Item, Void, Void>
+    private static class InsertAsyncTask extends AsyncTask<Item, Void, Void>
     {
 
         private ItemDao mAsyncTaskDao;
 
-        insertAsyncTask(ItemDao dao)
+        InsertAsyncTask(ItemDao dao)
         {
             mAsyncTaskDao = dao;
         }
