@@ -7,6 +7,10 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 public class NewItemActivity extends AppCompatActivity
 {
@@ -23,10 +27,23 @@ public class NewItemActivity extends AppCompatActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        // zxing object
+        IntentIntegrator integrator = new IntentIntegrator(this);
+
+        // zxing customization
+        //integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
+        integrator.setPrompt("Scan a barcode");
+        //integrator.setCameraId(0);  // Use a specific camera of the device
+        integrator.setBeepEnabled(true);
+        integrator.setBarcodeImageEnabled(true);
+
+        // start the scan
+        integrator.initiateScan();
         setContentView(R.layout.activity_new_item);
         mEditIdView = findViewById(R.id.edit_id);
         mEditNameView = findViewById(R.id.edit_name);
-        mEditQuantityView = findViewById(R.id.edit_quantity);;
+        mEditQuantityView = findViewById(R.id.edit_quantity);
 
         final Button button = findViewById(R.id.button_save);
         button.setOnClickListener(new View.OnClickListener()
@@ -52,5 +69,21 @@ public class NewItemActivity extends AppCompatActivity
                 finish();
             }
         });
+
+    }
+
+    // Get the results:
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }
