@@ -24,17 +24,20 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
     }
 
     private final LayoutInflater mInflater;
+    private final View.OnClickListener mClickListener;
     private List<Item> mItems; // Cached copy of items
 
-    ItemListAdapter(Context context)
+    ItemListAdapter(Context context, View.OnClickListener clickListener)
     {
         mInflater = LayoutInflater.from(context);
+        mClickListener = clickListener;
     }
 
     @Override
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
         View itemView = mInflater.inflate(R.layout.list_item, parent, false);
+        itemView.setOnClickListener(mClickListener);
         return new ItemViewHolder(itemView);
     }
 
@@ -44,7 +47,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
         if(mItems != null)
         {
             Item current = mItems.get(position);
-            holder.itemTextView.setText(current.getProductName());
+            holder.itemTextView.setText(current.getProductName() + " - " + current.getQuantity());
         }
         else
         {
@@ -57,6 +60,11 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
     {
         mItems = items;
         notifyDataSetChanged();
+    }
+
+    Item getItemAtPosition(int position)
+    {
+        return mItems.get(position);
     }
 
     // getItemCount() is called many times, and when it is first called,
