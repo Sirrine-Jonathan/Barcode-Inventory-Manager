@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity
 
         mItemViewModel = ViewModelProviders.of(this).get(ItemViewModel.class);
 
-        mItemViewModel.getAllWords().observe(this, new Observer<List<Item>>()
+        mItemViewModel.getAllItems().observe(this, new Observer<List<Item>>()
         {
             @Override
             public void onChanged(@Nullable final List<Item> items)
