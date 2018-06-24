@@ -19,9 +19,11 @@ public class NewItemActivity extends AppCompatActivity
     public static final String EXTRA_NAME = "byui_cs246.barcodeinventorymanager.newitem.name";
     public static final String EXTRA_QUANTITY = "byui_cs246.barcodeinventorymanager.newitem.quantity";
 
-    private EditText mEditIdView;
+    //private EditText mEditIdView;
     private EditText mEditNameView;
     private EditText mEditQuantityView;
+
+    private String code;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -41,7 +43,7 @@ public class NewItemActivity extends AppCompatActivity
         // start the scan
         integrator.initiateScan();
         setContentView(R.layout.activity_new_item);
-        mEditIdView = findViewById(R.id.edit_id);
+        //mEditIdView = findViewById(R.id.edit_id);
         mEditNameView = findViewById(R.id.edit_name);
         mEditQuantityView = findViewById(R.id.edit_quantity);
 
@@ -50,18 +52,16 @@ public class NewItemActivity extends AppCompatActivity
         {
             public void onClick(View view)
             {
-                if(TextUtils.isEmpty(mEditIdView.getText()) ||
-                   TextUtils.isEmpty(mEditQuantityView.getText()) ||
-                   TextUtils.isEmpty(mEditIdView.getText()))
+                if(TextUtils.isEmpty(mEditQuantityView.getText()) ||
+                   TextUtils.isEmpty(mEditNameView.getText()))
                     return;
 
                 Intent replyIntent = new Intent();
 
-                int id = Integer.parseInt(mEditIdView.getText().toString());
                 String name = mEditNameView.getText().toString();
                 int quantity = Integer.parseInt(mEditQuantityView.getText().toString());
 
-                replyIntent.putExtra(EXTRA_ID, id);
+                replyIntent.putExtra(EXTRA_ID, code);
                 replyIntent.putExtra(EXTRA_NAME, name);
                 replyIntent.putExtra(EXTRA_QUANTITY, quantity);
 
@@ -80,7 +80,8 @@ public class NewItemActivity extends AppCompatActivity
             if(result.getContents() == null) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                code = result.getContents();
+                Toast.makeText(this, "Item ID: " + code, Toast.LENGTH_LONG).show();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
