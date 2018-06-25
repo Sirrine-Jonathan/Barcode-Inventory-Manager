@@ -11,7 +11,7 @@ public class Item
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "product_code")
-    private int productCode;
+    private String productCode;
 
     @NonNull
     @ColumnInfo(name = "product_name")
@@ -21,14 +21,14 @@ public class Item
     @ColumnInfo(name = "quantity")
     private int quantity;
 
-    public Item(int productCode, String productName, int quantity)
+    public Item(String productCode, String productName, int quantity)
     {
         this.productCode = productCode;
         this.productName = productName;
         this.quantity = quantity;
     }
 
-    public int getProductCode() {return productCode;}
+    public String getProductCode() {return productCode;}
 
     public String getProductName() {return productName;}
 

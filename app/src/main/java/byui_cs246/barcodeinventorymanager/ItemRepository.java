@@ -29,20 +29,7 @@ public class ItemRepository
     {
         new InsertAsyncTask(mItemDao).execute(item);
     }
-    public Item getItemById(int id) {
-        GetItemByIdAsyncTask getter = new GetItemByIdAsyncTask(mItemDao);
-        Item returnItem = null;
-        try {
-            returnItem = getter.execute(id).get();
-        } catch (ExecutionException e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } catch (InterruptedException e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-            return returnItem;
-    }
+    public Item getItemById(String id) { return mItemDao.getItemById(id); }
 
     private static class InsertAsyncTask extends AsyncTask<Item, Void, Void>
     {
@@ -59,21 +46,6 @@ public class ItemRepository
         {
             mAsyncTaskDao.insert(params[0]);
             return null;
-        }
-    }
-    private static class GetItemByIdAsyncTask extends AsyncTask<Integer, Void, Item>
-    {
-        private ItemDao mAsyncTaskDao;
-
-        GetItemByIdAsyncTask(ItemDao dao) {
-            mAsyncTaskDao = dao;
-        }
-
-        @Override
-        protected Item doInBackground(final Integer... params)
-        {
-            Item item = mAsyncTaskDao.getItemById(params[0]);
-            return item;
         }
     }
 

@@ -20,5 +20,5 @@ public interface ItemDao
     LiveData<List<Item>> getAllItems();
 
     @Query("SELECT * from item_table WHERE product_code = :id LIMIT 1")
-    Item getItemById(int id);
+    Item getItemById(String id);
 }

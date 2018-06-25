@@ -88,12 +88,17 @@ public class MainActivity extends AppCompatActivity
 
         if(requestCode == NEW_ITEM_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK)
         {
-            int id = data.getIntExtra(EXTRA_ID, 0);
+            Boolean update_record = data.getBooleanExtra(NewItemActivity.EXTRA_METHOD, false);
+            String id = data.getStringExtra(NewItemActivity.EXTRA_ID);
             String name = data.getStringExtra(NewItemActivity.EXTRA_NAME);
             int quantity = data.getIntExtra(NewItemActivity.EXTRA_QUANTITY, 1);
 
-            Item item = new Item(id, name, quantity);
-            mItemViewModel.insert(item);
+            if (update_record){
+                Toast.makeText(this, "Update Record (Not working yet)", Toast.LENGTH_LONG).show();
+            } else {
+                Item item = new Item(id, name, quantity);
+                mItemViewModel.insert(item);
+            }
         }
     }
 

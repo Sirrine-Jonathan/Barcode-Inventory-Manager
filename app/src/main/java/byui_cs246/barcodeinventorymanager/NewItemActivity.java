@@ -18,13 +18,14 @@ public class NewItemActivity extends AppCompatActivity
     public static final String EXTRA_ID = "byui_cs246.barcodeinventorymanager.newitem.id";
     public static final String EXTRA_NAME = "byui_cs246.barcodeinventorymanager.newitem.name";
     public static final String EXTRA_QUANTITY = "byui_cs246.barcodeinventorymanager.newitem.quantity";
-    private ItemRoomDatabase itemRoomDatabase;
+    public static final String EXTRA_METHOD = "byui_cs246.barcodeinventorymanager.newitem.method";
 
-    //private EditText mEditIdView;
+    private EditText mEditIdView;
     private EditText mEditNameView;
     private EditText mEditQuantityView;
 
     private String code;
+    private Boolean update_record = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -44,7 +45,7 @@ public class NewItemActivity extends AppCompatActivity
         // start the scan
         integrator.initiateScan();
         setContentView(R.layout.activity_new_item);
-        //mEditIdView = findViewById(R.id.edit_id);
+        mEditIdView = findViewById(R.id.edit_id);
         mEditNameView = findViewById(R.id.edit_name);
         mEditQuantityView = findViewById(R.id.edit_quantity);
 
@@ -65,6 +66,7 @@ public class NewItemActivity extends AppCompatActivity
                 replyIntent.putExtra(EXTRA_ID, code);
                 replyIntent.putExtra(EXTRA_NAME, name);
                 replyIntent.putExtra(EXTRA_QUANTITY, quantity);
+                replyIntent.putExtra(EXTRA_METHOD, update_record);
 
                 setResult(RESULT_OK, replyIntent);
                 finish();
@@ -82,10 +84,20 @@ public class NewItemActivity extends AppCompatActivity
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
                 code = result.getContents();
-                ItemRepository items = new ItemRepository(this.getApplication());
-                Item item = items.getItemById(0);
-                String msg = (item != null) ? " NAME: " + item.getProductName():" NOT FOUND";
-                Toast.makeText(this, "ID: " + code + msg, Toast.LENGTH_LONG).show();
+                mEditIdView.setText(code);
+                ItemRepository db = new ItemRepository(this.getApplication());
+                Item item = db.getItemById(code);
+
+                if (item != null){
+                    update_record = true;
+                    mEditNameView.setText(item.getProductName());
+                    String quantity = Integer.toString(item.getQuantity());
+                    mEditQuantityView.setText(quantity);
+                }
+
+                // Toast
+                String msg = (item != null) ? "Scanned " + item.getProductName():"Scanned New Item";
+                Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

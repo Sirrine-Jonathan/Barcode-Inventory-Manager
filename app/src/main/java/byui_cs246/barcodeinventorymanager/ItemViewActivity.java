@@ -23,7 +23,7 @@ public class ItemViewActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         Intent data = getIntent();
-        int id = data.getIntExtra(EXTRA_ID, 0);
+        //int id = data.getIntExtra(EXTRA_ID, 0);
         String name = data.getStringExtra(NewItemActivity.EXTRA_NAME);
         int quantity = data.getIntExtra(NewItemActivity.EXTRA_QUANTITY, 1);
 

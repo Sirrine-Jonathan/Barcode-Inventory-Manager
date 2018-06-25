@@ -4,11 +4,14 @@ import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
+import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-@Database(entities = {Item.class}, version = 1)
+@Database(entities = {Item.class}, version = 2)
+@TypeConverters({IntTypeConverter.class})
 public abstract class ItemRoomDatabase extends RoomDatabase
 {
     public abstract ItemDao itemDao();
@@ -26,6 +29,8 @@ public abstract class ItemRoomDatabase extends RoomDatabase
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             ItemRoomDatabase.class, "item_database")
                             .addCallback(sRoomDatabaseCallback)
+                            .addMigrations(ItemRoomDatabase.MIGRATION_1_2)
+                            .allowMainThreadQueries()
                             .build();
 
                 }
@@ -55,11 +60,32 @@ public abstract class ItemRoomDatabase extends RoomDatabase
         @Override
         protected Void doInBackground(final Void... params) {
             mDao.deleteAll();
-            Item item = new Item(1,"Hello", 1);
+            Item item = new Item("1","Hello", 1);
             mDao.insert(item);
-            item = new Item(2,"World", 1);
+            item = new Item("2","World", 1);
             mDao.insert(item);
             return null;
         }
     }
+
+    public static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database){
+            String start = "BEGIN TRANSACTION;";
+
+            String stmt = "ALTER TABLE item_table RENAME TO tmp_item_table;" +
+
+                    "CREATE TABLE 'item_table' ('product_code' INTEGER PRIMARY KEY NOT NULL," +
+                    "'product_name' TEXT NOT NULL, 'quantity' INT NOT NULL );" +
+
+                    "INSERT INTO item_table(product_code, product_name, quantity) SELECT "+
+                    " product_code, product_name, quantity FROM tmp_item_table;" +
+
+                    "DROP TABLE tmp_item_table;";
+
+            String end = "COMMIT;";
+            database.execSQL(start + stmt + end);
+
+        }
+    };
 }
