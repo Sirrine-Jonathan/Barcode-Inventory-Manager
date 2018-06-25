@@ -18,4 +18,7 @@ public interface ItemDao
 
     @Query("SELECT * from item_table ORDER BY product_code ASC")
     LiveData<List<Item>> getAllItems();
+
+    @Query("SELECT * from item_table WHERE product_code = :id LIMIT 1")
+    Item getItemById(int id);
 }

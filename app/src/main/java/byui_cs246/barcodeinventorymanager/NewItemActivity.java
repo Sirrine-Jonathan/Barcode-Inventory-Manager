@@ -18,6 +18,7 @@ public class NewItemActivity extends AppCompatActivity
     public static final String EXTRA_ID = "byui_cs246.barcodeinventorymanager.newitem.id";
     public static final String EXTRA_NAME = "byui_cs246.barcodeinventorymanager.newitem.name";
     public static final String EXTRA_QUANTITY = "byui_cs246.barcodeinventorymanager.newitem.quantity";
+    private ItemRoomDatabase itemRoomDatabase;
 
     //private EditText mEditIdView;
     private EditText mEditNameView;
@@ -81,10 +82,13 @@ public class NewItemActivity extends AppCompatActivity
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
                 code = result.getContents();
-                Toast.makeText(this, "Item ID: " + code, Toast.LENGTH_LONG).show();
+                ItemRepository items = new ItemRepository(this.getApplication());
+                items.getItemById(0);
+                Toast.makeText(this, code, Toast.LENGTH_LONG).show();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+
 }
