@@ -4,7 +4,9 @@ import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class ItemRepository
 {
@@ -28,9 +30,18 @@ public class ItemRepository
         new InsertAsyncTask(mItemDao).execute(item);
     }
     public Item getItemById(int id) {
-        GetItemByIdAsyncTask getter = new GetItemByIdAsyncTask(mItemDao, ItemRepository.this);
-        Item item = getter.onPostExecute();
-        return item;
+        GetItemByIdAsyncTask getter = new GetItemByIdAsyncTask(mItemDao);
+        Item returnItem = null;
+        try {
+            returnItem = getter.execute(id).get();
+        } catch (ExecutionException e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        } catch (InterruptedException e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+            return returnItem;
     }
 
     private static class InsertAsyncTask extends AsyncTask<Item, Void, Void>
@@ -50,25 +61,18 @@ public class ItemRepository
             return null;
         }
     }
-    private static class GetItemByIdAsyncTask extends AsyncTask<Integer, Void, Void>
+    private static class GetItemByIdAsyncTask extends AsyncTask<Integer, Void, Item>
     {
         private ItemDao mAsyncTaskDao;
-        private ItemRepository caller;
-        private Item item;
 
-        GetItemByIdAsyncTask(ItemDao dao, ItemRepository caller) {
+        GetItemByIdAsyncTask(ItemDao dao) {
             mAsyncTaskDao = dao;
-            this.caller = caller;
         }
 
         @Override
-        protected Void doInBackground(final Integer... params)
+        protected Item doInBackground(final Integer... params)
         {
-            item = mAsyncTaskDao.getItemById(params[0]);
-            return null;
-        }
-
-        protected Item onPostExecute() {
+            Item item = mAsyncTaskDao.getItemById(params[0]);
             return item;
         }
     }

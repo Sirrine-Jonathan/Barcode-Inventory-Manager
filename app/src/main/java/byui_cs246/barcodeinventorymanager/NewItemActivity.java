@@ -83,8 +83,9 @@ public class NewItemActivity extends AppCompatActivity
             } else {
                 code = result.getContents();
                 ItemRepository items = new ItemRepository(this.getApplication());
-                items.getItemById(0);
-                Toast.makeText(this, code, Toast.LENGTH_LONG).show();
+                Item item = items.getItemById(0);
+                String msg = (item != null) ? " NAME: " + item.getProductName():" NOT FOUND";
+                Toast.makeText(this, "ID: " + code + msg, Toast.LENGTH_LONG).show();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
