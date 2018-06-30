@@ -1,5 +1,6 @@
 package byui_cs246.barcodeinventorymanager;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,9 +21,9 @@ public class NewItemActivity extends AppCompatActivity
     public static final String EXTRA_QUANTITY = "byui_cs246.barcodeinventorymanager.newitem.quantity";
     public static final String EXTRA_METHOD = "byui_cs246.barcodeinventorymanager.newitem.method";
 
-    private EditText mEditIdView;
     private EditText mEditNameView;
     private EditText mEditQuantityView;
+    private ItemViewModel mItemViewModel;
 
     private String code;
     private Boolean update_record = false;
@@ -31,21 +32,22 @@ public class NewItemActivity extends AppCompatActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        mItemViewModel = ViewModelProviders.of(this).get(ItemViewModel.class);
 
         // zxing object
         IntentIntegrator integrator = new IntentIntegrator(this);
 
         // zxing customization
         //integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
-        integrator.setPrompt("Scan a barcode");
         //integrator.setCameraId(0);  // Use a specific camera of the device
-        integrator.setBeepEnabled(true);
-        integrator.setBarcodeImageEnabled(true);
+        integrator.setPrompt("Scan a barcode");
+        boolean sound = true; // get this value from shared preferred.
+        integrator.setBeepEnabled(sound);
+        integrator.setBarcodeImageEnabled(false);
 
         // start the scan
         integrator.initiateScan();
         setContentView(R.layout.activity_new_item);
-        mEditIdView = findViewById(R.id.edit_id);
         mEditNameView = findViewById(R.id.edit_name);
         mEditQuantityView = findViewById(R.id.edit_quantity);
 
@@ -84,9 +86,7 @@ public class NewItemActivity extends AppCompatActivity
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
                 code = result.getContents();
-                mEditIdView.setText(code);
-                ItemRepository db = new ItemRepository(this.getApplication());
-                Item item = db.getItemById(code);
+                Item item = mItemViewModel.getItemById(code);
 
                 if (item != null){
                     update_record = true;

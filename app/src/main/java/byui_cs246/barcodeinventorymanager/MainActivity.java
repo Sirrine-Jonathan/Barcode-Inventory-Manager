@@ -2,6 +2,7 @@ package byui_cs246.barcodeinventorymanager;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -94,11 +95,14 @@ public class MainActivity extends AppCompatActivity
             int quantity = data.getIntExtra(NewItemActivity.EXTRA_QUANTITY, 1);
 
             if (update_record){
-                Toast.makeText(this, "Update Record (Not working yet)", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Updating " + name, Toast.LENGTH_LONG).show();
             } else {
-                Item item = new Item(id, name, quantity);
-                mItemViewModel.insert(item);
+                Toast.makeText(this, "Inserting " + name, Toast.LENGTH_LONG).show();
             }
+
+            // add or update
+            Item item = new Item(id, name, quantity);
+            mItemViewModel.insert(item);
         }
     }
 
@@ -126,4 +130,5 @@ public class MainActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
+
 }
