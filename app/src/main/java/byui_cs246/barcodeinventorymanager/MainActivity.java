@@ -2,6 +2,7 @@ package byui_cs246.barcodeinventorymanager;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,14 +14,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.List;
+
+import static byui_cs246.barcodeinventorymanager.NewItemActivity.EXTRA_ID;
+import static byui_cs246.barcodeinventorymanager.NewItemActivity.EXTRA_NAME;
+import static byui_cs246.barcodeinventorymanager.NewItemActivity.EXTRA_QUANTITY;
 
 public class MainActivity extends AppCompatActivity
 {
     public static final int NEW_ITEM_ACTIVITY_REQUEST_CODE = 1;
+    public static final int ITEM_VIEW_ACTIVITY_REQUEST_CODE = 2;
 
     private ItemViewModel mItemViewModel;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -41,10 +49,10 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        RecyclerView recyclerView = findViewById(R.id.list);
-        final ItemListAdapter adapter = new ItemListAdapter(this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView = findViewById(R.id.list);
+        final ItemListAdapter adapter = new ItemListAdapter(this, clickListener);
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         mItemViewModel = ViewModelProviders.of(this).get(ItemViewModel.class);
 
@@ -59,16 +67,40 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    View.OnClickListener clickListener = new View.OnClickListener()
+    {
+        @Override
+        public void onClick(View v)
+        {
+            int position = mRecyclerView.getChildLayoutPosition(v);
+            Item item = ((ItemListAdapter) mRecyclerView.getAdapter()).getItemAtPosition(position);
+
+            Intent intent = new Intent(MainActivity.this, ItemViewActivity.class);
+            intent.putExtra(EXTRA_ID, item.getProductCode());
+            intent.putExtra(EXTRA_NAME, item.getProductName());
+            intent.putExtra(EXTRA_QUANTITY, item.getQuantity());
+            startActivityForResult(intent, ITEM_VIEW_ACTIVITY_REQUEST_CODE);
+        }
+    };
+
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == NEW_ITEM_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK)
         {
-            int id = data.getIntExtra(NewItemActivity.EXTRA_ID, 0);
+            Boolean update_record = data.getBooleanExtra(NewItemActivity.EXTRA_METHOD, false);
+            String id = data.getStringExtra(NewItemActivity.EXTRA_ID);
             String name = data.getStringExtra(NewItemActivity.EXTRA_NAME);
             int quantity = data.getIntExtra(NewItemActivity.EXTRA_QUANTITY, 1);
 
+            if (update_record){
+                Toast.makeText(this, "Updating " + name, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Inserting " + name, Toast.LENGTH_LONG).show();
+            }
+
+            // add or update
             Item item = new Item(id, name, quantity);
             mItemViewModel.insert(item);
         }
@@ -98,4 +130,5 @@ public class MainActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
+
 }

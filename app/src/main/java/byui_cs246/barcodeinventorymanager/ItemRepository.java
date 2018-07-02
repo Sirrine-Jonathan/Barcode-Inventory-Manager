@@ -4,7 +4,9 @@ import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class ItemRepository
 {
@@ -27,6 +29,7 @@ public class ItemRepository
     {
         new InsertAsyncTask(mItemDao).execute(item);
     }
+    public Item getItemById(String id) { return mItemDao.getItemById(id); }
 
     private static class InsertAsyncTask extends AsyncTask<Item, Void, Void>
     {
@@ -45,4 +48,5 @@ public class ItemRepository
             return null;
         }
     }
+
 }
