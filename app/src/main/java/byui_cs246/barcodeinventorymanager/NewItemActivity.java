@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,7 +21,7 @@ public class NewItemActivity extends AppCompatActivity
     public static final String EXTRA_NAME = "byui_cs246.barcodeinventorymanager.newitem.name";
     public static final String EXTRA_QUANTITY = "byui_cs246.barcodeinventorymanager.newitem.quantity";
     public static final String EXTRA_METHOD = "byui_cs246.barcodeinventorymanager.newitem.method";
-
+    private static final String TAG = NewItemActivity.class.getSimpleName();
     private EditText mEditNameView;
     private EditText mEditQuantityView;
     private ItemViewModel mItemViewModel;
@@ -84,6 +85,7 @@ public class NewItemActivity extends AppCompatActivity
         if(result != null) {
             if(result.getContents() == null) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+                Log.i(TAG, "Scan Cancelled");
             } else {
                 code = result.getContents();
                 Item item = mItemViewModel.getItemById(code);
@@ -98,6 +100,7 @@ public class NewItemActivity extends AppCompatActivity
                 // Toast
                 String msg = (item != null) ? "Scanned " + item.getProductName():"Scanned New Item";
                 Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+                Log.i(TAG, msg);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

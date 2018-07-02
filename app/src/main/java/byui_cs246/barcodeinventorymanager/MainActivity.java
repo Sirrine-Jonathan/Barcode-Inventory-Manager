@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity
 {
     public static final int NEW_ITEM_ACTIVITY_REQUEST_CODE = 1;
     public static final int ITEM_VIEW_ACTIVITY_REQUEST_CODE = 2;
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private ItemViewModel mItemViewModel;
     private RecyclerView mRecyclerView;
@@ -95,9 +97,9 @@ public class MainActivity extends AppCompatActivity
             int quantity = data.getIntExtra(NewItemActivity.EXTRA_QUANTITY, 1);
 
             if (update_record){
-                Toast.makeText(this, "Updating " + name, Toast.LENGTH_LONG).show();
+                Log.i(TAG, "Updating " + name);
             } else {
-                Toast.makeText(this, "Inserting " + name, Toast.LENGTH_LONG).show();
+                Log.i(TAG, "Inserting " + name);
             }
 
             // add or update
