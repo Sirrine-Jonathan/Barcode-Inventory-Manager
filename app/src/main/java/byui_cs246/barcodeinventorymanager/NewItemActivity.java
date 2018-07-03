@@ -1,8 +1,11 @@
 package byui_cs246.barcodeinventorymanager;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -41,10 +44,16 @@ public class NewItemActivity extends AppCompatActivity
         // zxing customization
         //integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
         //integrator.setCameraId(0);  // Use a specific camera of the device
+        //integrator.setBarcodeImageEnabled(false); // gets barcode image and sends its path
+        //
         integrator.setPrompt("Scan a barcode");
-        boolean sound = true; // get this value from shared preferred.
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean sound = pref.getBoolean(Long.toString(MainActivity.SOUND_SETTINGS_ID), false);
+        boolean text = pref.getBoolean(Long.toString(MainActivity.TEXT_SIZE_SETTINGS_ID), false);
         integrator.setBeepEnabled(sound);
-        integrator.setBarcodeImageEnabled(false);
+
+        // using the text preferences as a debugging tool here
+        integrator.setOrientationLocked(text);
 
         // start the scan
         integrator.initiateScan();

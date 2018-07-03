@@ -3,8 +3,11 @@ package byui_cs246.barcodeinventorymanager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +33,9 @@ public class MainActivity extends AppCompatActivity
     public static final int ITEM_VIEW_ACTIVITY_REQUEST_CODE = 2;
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    // Settings
+    public static final long SOUND_SETTINGS_ID = 2131230878;
+    public static final long TEXT_SIZE_SETTINGS_ID = 2131230897;
     private ItemViewModel mItemViewModel;
     private RecyclerView mRecyclerView;
 
@@ -36,6 +43,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -113,8 +121,21 @@ public class MainActivity extends AppCompatActivity
     {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        Log.i(TAG, "creating menu options");
         return true;
     }
+
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+        Log.i(TAG, "preparing menu options");
+    /*
+         might need to get the shared preferences to set
+         menu items to checked or not
+    */
+        return true;
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
@@ -123,13 +144,21 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        Log.i(TAG, "Menu Item ID: " + id);
 
         //noinspection SimplifiableIfStatement
         if(id == R.id.action_settings)
         {
-            return true;
+            //return true;
         }
-
+        else
+        {
+            item.setChecked(!item.isChecked());
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putBoolean(Long.toString(id), item.isChecked());
+            editor.apply();
+        }
         return super.onOptionsItemSelected(item);
     }
 
