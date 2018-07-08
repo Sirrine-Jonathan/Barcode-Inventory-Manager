@@ -4,9 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class ItemRepository
 {
@@ -29,6 +27,10 @@ public class ItemRepository
     {
         new InsertAsyncTask(mItemDao).execute(item);
     }
+    public void delete(Item item)
+    {
+        new DeleteAsyncTask(mItemDao).execute(item);
+    }
     public Item getItemById(String id) { return mItemDao.getItemById(id); }
 
     private static class InsertAsyncTask extends AsyncTask<Item, Void, Void>
@@ -49,4 +51,21 @@ public class ItemRepository
         }
     }
 
+    private static class DeleteAsyncTask extends AsyncTask<Item, Void, Void>
+    {
+
+        private ItemDao mAsyncTaskDao;
+
+        DeleteAsyncTask(ItemDao dao)
+        {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final Item... params)
+        {
+            mAsyncTaskDao.delete(params[0]);
+            return null;
+        }
+    }
 }

@@ -25,12 +25,14 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
 
     private final LayoutInflater mInflater;
     private final View.OnClickListener mClickListener;
+    private final View.OnLongClickListener mLongClickListener;
     private List<Item> mItems; // Cached copy of items
 
-    ItemListAdapter(Context context, View.OnClickListener clickListener)
+    ItemListAdapter(Context context, View.OnClickListener clickListener, View.OnLongClickListener longClickListener)
     {
         mInflater = LayoutInflater.from(context);
         mClickListener = clickListener;
+        mLongClickListener = longClickListener;
     }
 
     @Override
@@ -38,6 +40,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
     {
         View itemView = mInflater.inflate(R.layout.list_item, parent, false);
         itemView.setOnClickListener(mClickListener);
+        itemView.setOnLongClickListener(mLongClickListener);
         return new ItemViewHolder(itemView);
     }
 
