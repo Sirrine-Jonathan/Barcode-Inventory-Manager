@@ -3,10 +3,12 @@ package byui_cs246.barcodeinventorymanager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         mRecyclerView = findViewById(R.id.list);
-        final ItemListAdapter adapter = new ItemListAdapter(this, clickListener);
+        final ItemListAdapter adapter = new ItemListAdapter(this, clickListener, longClickListener);
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -82,6 +84,41 @@ public class MainActivity extends AppCompatActivity
             intent.putExtra(EXTRA_NAME, item.getProductName());
             intent.putExtra(EXTRA_QUANTITY, item.getQuantity());
             startActivityForResult(intent, ITEM_VIEW_ACTIVITY_REQUEST_CODE);
+        }
+    };
+
+    View.OnLongClickListener longClickListener = new View.OnLongClickListener()
+    {
+        @Override
+        public boolean onLongClick(View v)
+        {
+            int position = mRecyclerView.getChildLayoutPosition(v);
+            final Item item = ((ItemListAdapter) mRecyclerView.getAdapter()).getItemAtPosition(position);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Delete Item")
+                    .setMessage("Do you want to delete " + item.getProductName() + "?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            mItemViewModel.delete(item);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            // do nothing
+                        }
+                    }).show();
+
+
+
+
+            return true;
         }
     };
 
