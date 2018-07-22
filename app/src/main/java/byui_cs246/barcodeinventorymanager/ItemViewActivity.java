@@ -7,11 +7,18 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Switch;
+import android.widget.TextView;
 
 public class ItemViewActivity extends AppCompatActivity
 {
@@ -33,6 +40,7 @@ public class ItemViewActivity extends AppCompatActivity
     private NumberPicker mQuantityPicker;
     private Switch mEnableWarning;
     private NumberPicker mLowStockPicker;
+    private Button mSaveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -96,16 +104,15 @@ public class ItemViewActivity extends AppCompatActivity
 
         setSupportActionBar(toolbar);
 
-        findViewById(R.id.save).setOnClickListener(new View.OnClickListener()
+        mSaveButton = findViewById(R.id.save);
+        if(TextUtils.isEmpty(mNameEdit.getText()))
+            mSaveButton.setEnabled(false);
+        mSaveButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                Item item = new Item(mId, mNameEdit.getText().toString(), mQuantityPicker.getValue());
-                item.setLowStockWarningEnabled(mEnableWarning.isChecked());
-                item.setLowStockAmount(mLowStockPicker.getValue());
-                mItemViewModel.insert(item);
-                finish();
+                save();
             }
         });
 
@@ -131,9 +138,8 @@ public class ItemViewActivity extends AppCompatActivity
                             @Override
                             public void onClick(DialogInterface dialog, int which)
                             {
-                                Item item = new Item(mId, mName, mQuantity);
-                                item.setDeleted(true);
-                                mItemViewModel.insert(item);
+                                mItem.setDeleted(true);
+                                mItemViewModel.insert(mItem);
                                 finish();
                             }
                         })
@@ -147,12 +153,74 @@ public class ItemViewActivity extends AppCompatActivity
                         }).show();
             }
         });
+
+        mNameEdit.addTextChangedListener(new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                mSaveButton.setEnabled(!TextUtils.isEmpty(s));
+            }
+        });
+        mNameEdit.setOnKeyListener(new View.OnKeyListener()
+        {
+            public boolean onKey(View v, int keyCode, KeyEvent event)
+            {
+                if (event.getAction() == KeyEvent.ACTION_DOWN)
+                {
+                    switch (keyCode)
+                    {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            save();
+                            return true;
+                        default:
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
+        mNameEdit.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    save();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
     public void onBackPressed()
     {
         close();
+    }
+
+    public void save()
+    {
+        if(!TextUtils.isEmpty(mNameEdit.getText()))
+        {
+            Item item = new Item(mId, mNameEdit.getText().toString(), mQuantityPicker.getValue());
+            item.setLowStockWarningEnabled(mEnableWarning.isChecked());
+            item.setLowStockAmount(mLowStockPicker.getValue());
+            mItemViewModel.insert(item);
+            finish();
+        }
     }
 
     public void close()

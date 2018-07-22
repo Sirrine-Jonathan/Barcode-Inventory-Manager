@@ -33,7 +33,8 @@
                           android:layout_marginRight="30dp"
                           android:gravity="center"
                           android:inputType="text"
-                          android:textSize="22sp"/>
+                          android:textSize="22sp"
+                          android:imeOptions="actionDone"/>
 
                 <TextView
                     android:id="@+id/quantity_label"
