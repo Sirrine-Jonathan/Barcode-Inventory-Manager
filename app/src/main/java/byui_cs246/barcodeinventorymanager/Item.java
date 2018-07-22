@@ -21,6 +21,15 @@ public class Item
     @ColumnInfo(name = "quantity")
     private int quantity;
 
+    @ColumnInfo(name = "deleted")
+    private boolean deleted = false;
+
+    @ColumnInfo(name = "low_stock_enabled")
+    private boolean lowStockWarningEnabled = false;
+
+    @ColumnInfo(name = "low_stock_amount")
+    private int lowStockAmount = 1;
+
     public Item(String productCode, String productName, int quantity)
     {
         this.productCode = productCode;
@@ -28,9 +37,35 @@ public class Item
         this.quantity = quantity;
     }
 
+    @NonNull
     public String getProductCode() {return productCode;}
 
+    @NonNull
     public String getProductName() {return productName;}
+
+    public boolean isLowStockWarningEnabled()
+    {
+        return lowStockWarningEnabled;
+    }
+
+    public void setLowStockWarningEnabled(boolean lowStockWarningEnabled)
+    {
+        this.lowStockWarningEnabled = lowStockWarningEnabled;
+    }
+
+    public int getLowStockAmount()
+    {
+        return lowStockAmount;
+    }
+
+    public void setLowStockAmount(int lowStockAmount)
+    {
+        this.lowStockAmount = lowStockAmount;
+    }
+
+    public boolean isDeleted() {return deleted;}
+
+    public void setDeleted(boolean deleted) {this.deleted = deleted;}
 
     public int getQuantity() {return quantity;}
 

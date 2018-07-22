@@ -1,27 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ItemViewActivity"
-    tools:showIn="@layout/activity_item_view">
+    tools:context=".ItemViewActivity" tools:showIn="@layout/activity_item_view">
 
-    <TextView android:id="@+id/name"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_alignParentStart="true"
-              android:layout_alignParentTop="true"
-              android:text="Name: "
-              android:textAppearance="@android:style/TextAppearance.Material.Medium"/>
-    <TextView android:id="@+id/quantity"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_alignParentStart="true"
-              android:layout_below="@+id/name"
-              android:text="Quantity: "
-              android:textAppearance="@android:style/TextAppearance.Material.Medium"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1" android:gravity="center_vertical" android:orientation="vertical">
 
-</RelativeLayout>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <RelativeLayout android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp" android:layout_marginRight="10dp"
+                            android:isScrollContainer="true">
+
+                <EditText android:id="@+id/edit_name"
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:layout_alignParentTop="true"
+                          android:layout_centerHorizontal="true"
+                          android:layout_marginLeft="30dp"
+                          android:layout_marginRight="30dp"
+                          android:gravity="center"
+                          android:inputType="text"
+                          android:textSize="22sp"
+                          android:imeOptions="actionDone"/>
+
+                <TextView
+                    android:id="@+id/quantity_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/edit_name"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/quantity" android:textSize="18sp"/>
+
+                <NumberPicker
+                    android:id="@+id/quantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/quantity_label"
+                    android:layout_centerHorizontal="true"/>
+
+
+                <NumberPicker
+                    android:id="@+id/low_stock_picker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/enable_warning"
+                    android:layout_centerHorizontal="true"
+                    android:visibility="gone"/>
+                <Switch
+                    android:id="@+id/enable_warning"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@+id/quantity"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:lines="2"
+                    android:text="@string/enable_warning"
+                    android:textSize="16sp"/>
+
+            </RelativeLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_gray"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/delete"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_marginRight="1dp"
+            android:layout_marginTop="1dp" android:layout_weight="1"
+            android:background="@android:color/background_light" android:text="@string/delete"/>
+        <Button
+            android:id="@+id/cancel"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="1dp"
+            android:layout_marginTop="1dp" android:layout_weight="1"
+            android:background="@android:color/background_light" android:text="@string/cancel"/>
+        <Button
+            android:id="@+id/save"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_weight="1" android:background="@android:color/background_light"
+            android:text="@string/save"/>
+
+    </LinearLayout>
+
+</LinearLayout>

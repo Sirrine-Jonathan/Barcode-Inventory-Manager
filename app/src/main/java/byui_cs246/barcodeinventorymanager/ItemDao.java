@@ -23,7 +23,7 @@ public interface ItemDao
     @Delete
     void delete(Item item);
 
-    @Query("SELECT * from item_table ORDER BY product_code ASC")
+    @Query("SELECT * from item_table WHERE NOT deleted ORDER BY product_code ASC")
     LiveData<List<Item>> getAllItems();
 
     @Query("SELECT * from item_table WHERE product_code = :id LIMIT 1")

@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -14,12 +15,18 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
 
     class ItemViewHolder extends RecyclerView.ViewHolder
     {
-        private final TextView itemTextView;
+        private final TextView itemNameView;
+        private final TextView quantityView;
+        private final ImageView warningImage;
+        private final ImageView depletedImage;
 
         private ItemViewHolder(View itemView)
         {
             super(itemView);
-            itemTextView = itemView.findViewById(R.id.text);
+            itemNameView = itemView.findViewById(R.id.name);
+            quantityView = itemView.findViewById(R.id.quantity);
+            warningImage = itemView.findViewById(R.id.warning_image);
+            depletedImage = itemView.findViewById(R.id.depleted_image);
         }
     }
 
@@ -50,12 +57,30 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
         if(mItems != null)
         {
             Item current = mItems.get(position);
-            holder.itemTextView.setText(current.getProductName() + " - " + current.getQuantity());
+            holder.itemNameView.setText(current.getProductName());
+            holder.quantityView.setText(String.format("Qty: %s", current.getQuantity()));
+
+            if(current.getQuantity() == 0)
+            {
+                holder.depletedImage.setVisibility(View.VISIBLE);
+                holder.warningImage.setVisibility(View.INVISIBLE);
+            }
+            else if(current.isLowStockWarningEnabled() && current.getQuantity() <= 1)
+            {
+                holder.depletedImage.setVisibility(View.INVISIBLE);
+                holder.warningImage.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                holder.depletedImage.setVisibility(View.INVISIBLE);
+                holder.warningImage.setVisibility(View.INVISIBLE);
+            }
         }
         else
         {
             // Covers the case of data not being ready yet.
-            holder.itemTextView.setText("Empty");
+            holder.itemNameView.setText("Empty");
+            holder.quantityView.setText("Qty: 0");
         }
     }
 
