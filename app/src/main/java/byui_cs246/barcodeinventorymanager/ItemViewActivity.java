@@ -102,7 +102,7 @@ public class ItemViewActivity extends AppCompatActivity
             public void onClick(View v)
             {
                 Item item = new Item(mId, mNameEdit.getText().toString(), mQuantityPicker.getValue());
-                item.setLowStockWarningEnabled(mEnableWarning.isEnabled());
+                item.setLowStockWarningEnabled(mEnableWarning.isChecked());
                 item.setLowStockAmount(mLowStockPicker.getValue());
                 mItemViewModel.insert(item);
                 finish();
