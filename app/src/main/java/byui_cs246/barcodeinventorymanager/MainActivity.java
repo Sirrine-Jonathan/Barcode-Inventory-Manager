@@ -4,7 +4,9 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -30,6 +32,8 @@ public class MainActivity extends AppCompatActivity
 {
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    public static final long SOUND_SETTINGS_ID = 2131230885;
+    public static final long ORIENTATION_SETTINGS_ID = 2131230904;
     private ItemViewModel mItemViewModel;
     private RecyclerView mRecyclerView;
 
@@ -40,6 +44,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener()
@@ -126,10 +131,12 @@ public class MainActivity extends AppCompatActivity
         //integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
         //integrator.setCameraId(0);  // Use a specific camera of the device
         integrator.setPrompt("Scan a barcode");
-        boolean sound = true; // get this value from shared preferred.
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean sound = pref.getBoolean(Long.toString(MainActivity.SOUND_SETTINGS_ID), false);
+        boolean orientationLock = pref.getBoolean(Long.toString(MainActivity.ORIENTATION_SETTINGS_ID), false);
         integrator.setBeepEnabled(sound);
         integrator.setBarcodeImageEnabled(false);
-        integrator.setOrientationLocked(false);
+        integrator.setOrientationLocked(orientationLock);
 
         // start the scan
         integrator.initiateScan();
@@ -172,11 +179,14 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        Log.i(TAG, "Menu Item ID: " + id);
 
-        //noinspection SimplifiableIfStatement
-        if(id == R.id.action_settings)
-        {
-            return true;
+        if(id != R.id.action_settings){
+            item.setChecked(!item.isChecked());
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putBoolean(Long.toString(id), item.isChecked());
+            editor.apply();
         }
 
         return super.onOptionsItemSelected(item);
