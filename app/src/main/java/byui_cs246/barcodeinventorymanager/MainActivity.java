@@ -2,7 +2,6 @@ package byui_cs246.barcodeinventorymanager;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -19,16 +19,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+
 import java.util.List;
 
-import static byui_cs246.barcodeinventorymanager.NewItemActivity.EXTRA_ID;
-import static byui_cs246.barcodeinventorymanager.NewItemActivity.EXTRA_NAME;
-import static byui_cs246.barcodeinventorymanager.NewItemActivity.EXTRA_QUANTITY;
+import static byui_cs246.barcodeinventorymanager.ItemViewActivity.EXTRA_ID;
 
 public class MainActivity extends AppCompatActivity
 {
-    public static final int NEW_ITEM_ACTIVITY_REQUEST_CODE = 1;
-    public static final int ITEM_VIEW_ACTIVITY_REQUEST_CODE = 2;
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private ItemViewModel mItemViewModel;
@@ -48,8 +47,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                Intent intent = new Intent(MainActivity.this, NewItemActivity.class);
-                startActivityForResult(intent, NEW_ITEM_ACTIVITY_REQUEST_CODE);
+                startScanner();
             }
         });
 
@@ -57,6 +55,7 @@ public class MainActivity extends AppCompatActivity
         final ItemListAdapter adapter = new ItemListAdapter(this, clickListener, longClickListener);
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
 
         mItemViewModel = ViewModelProviders.of(this).get(ItemViewModel.class);
 
@@ -81,9 +80,7 @@ public class MainActivity extends AppCompatActivity
 
             Intent intent = new Intent(MainActivity.this, ItemViewActivity.class);
             intent.putExtra(EXTRA_ID, item.getProductCode());
-            intent.putExtra(EXTRA_NAME, item.getProductName());
-            intent.putExtra(EXTRA_QUANTITY, item.getQuantity());
-            startActivityForResult(intent, ITEM_VIEW_ACTIVITY_REQUEST_CODE);
+            startActivity(intent);
         }
     };
 
@@ -103,7 +100,8 @@ public class MainActivity extends AppCompatActivity
                         @Override
                         public void onClick(DialogInterface dialog, int which)
                         {
-                            mItemViewModel.delete(item);
+                            item.setDeleted(true);
+                            mItemViewModel.insert(item);
                         }
                     })
                     .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener()
@@ -115,34 +113,48 @@ public class MainActivity extends AppCompatActivity
                         }
                     }).show();
 
-
-
-
             return true;
         }
     };
 
+    public void startScanner()
+    {
+        // zxing object
+        IntentIntegrator integrator = new IntentIntegrator(this);
+
+        // zxing customization
+        //integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
+        //integrator.setCameraId(0);  // Use a specific camera of the device
+        integrator.setPrompt("Scan a barcode");
+        boolean sound = true; // get this value from shared preferred.
+        integrator.setBeepEnabled(sound);
+        integrator.setBarcodeImageEnabled(false);
+        integrator.setOrientationLocked(false);
+
+        // start the scan
+        integrator.initiateScan();
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode == NEW_ITEM_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK)
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null)
         {
-            Boolean update_record = data.getBooleanExtra(NewItemActivity.EXTRA_METHOD, false);
-            String id = data.getStringExtra(NewItemActivity.EXTRA_ID);
-            String name = data.getStringExtra(NewItemActivity.EXTRA_NAME);
-            int quantity = data.getIntExtra(NewItemActivity.EXTRA_QUANTITY, 1);
-
-            if (update_record){
-                Log.i(TAG, "Updating " + name);
-            } else {
-                Log.i(TAG, "Inserting " + name);
+            if(result.getContents() == null)
+            {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+                Log.i(TAG, "Scan Cancelled");
             }
-
-            // add or update
-            Item item = new Item(id, name, quantity);
-            mItemViewModel.insert(item);
+            else
+            {
+                String code = result.getContents();
+                Intent intent = new Intent(MainActivity.this, ItemViewActivity.class);
+                intent.putExtra(EXTRA_ID, code);
+                startActivity(intent);
+            }
         }
+        else
+            super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
